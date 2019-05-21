@@ -34,15 +34,39 @@
 						'<input class="tdiCheck" type="checkbox" name="isComplete" ' +
 						(tdi.isComplete ? "checked" : "") +
 						' value="isComplete" />' +
+						' <button class="delete" >Delete</button> ' +
 						`<span>${tdi.name}</span>`;
 					elTasks.appendChild(elTdi);
 				});
+
+				let elsDels = document.getElementsByClassName("delete");
+				
+				for ( let i = 0 ; i < elsDels.length ; i++ ) {
+					let el = elsDels[i];
+					el.addEventListener('click', async () => {
+						let id = el.parentElement.id;
+						const deleteResult = await fetch (
+							`https://localhost:5001/api/todo/${id}`,
+							{
+								method: "DELETE",
+								headers: {
+									Accept: "application/json",
+									"Content-Type": "application/json"
+								}
+							}
+						);
+						getTodos();
+					}); 
+				}
+
+
+
 
 				let elsChecks = document.querySelectorAll(".tdiCheck");
 
 				elsChecks.forEach(el => {
 					el.addEventListener("click", async e => {
-						console.log(el, el.parentElement.id, el.checked);
+						// console.log(el, el.parentElement.id, el.checked);
 
 						const itemsRaw = await fetch(
 							"https://localhost:5001/api/todo/" + el.parentElement.id,
@@ -58,10 +82,11 @@
 								})
 							}
 						);
+						getTodos();
 					});
 				});
 
-				console.log(items);
+				// console.log(items);
 			};
 
 			getTodos();
